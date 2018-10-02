@@ -4,14 +4,19 @@ import { routerReducer, routerMiddleware } from 'react-router-redux';
 import * as StoreModule from './store';
 import { ApplicationState, reducers } from './store';
 import { History } from 'history';
+import { createEpicMiddleware } from "redux-observable";
+import { rootEpic } from "./store";
+
 
 export default function configureStore(history: History, initialState?: ApplicationState) {
+    const epicMiddleware = createEpicMiddleware();
     // Build middleware. These are functions that can process the actions before they reach the store.
     const windowIfDefined = typeof window === 'undefined' ? null : window as any;
     // If devTools is installed, connect to it
     const devToolsExtension = windowIfDefined && windowIfDefined.__REDUX_DEVTOOLS_EXTENSION__ as () => StoreEnhancer;
     const createStoreWithMiddleware = compose<StoreEnhancerStoreCreator<any>>(
         applyMiddleware(thunk, routerMiddleware(history)),
+        applyMiddleware(epicMiddleware),
         devToolsExtension ? devToolsExtension() : <S>(next: StoreEnhancerStoreCreator<S>) => next
     )(createStore);
 
@@ -26,6 +31,8 @@ export default function configureStore(history: History, initialState?: Applicat
             store.replaceReducer(buildRootReducer(nextRootReducer.reducers));
         });
     }
+
+    epicMiddleware.run(rootEpic);
 
     return store;
 }
