@@ -16,7 +16,7 @@ class Counter extends React.Component<PingProps, {}> {
 
             <p>This is a simple example of a React component.</p>
 
-            <p>Is pinging: <strong>{ this.props.isPinging }</strong></p>
+            <p>Is pinging: <strong>{ this.props.isPinging.toString() }</strong></p>
 
             <button onClick={ () => { this.props.ping() } }>Start Ping</button>
         </div>;
