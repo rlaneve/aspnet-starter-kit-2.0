@@ -1,13 +1,15 @@
 import * as React from 'react';
-import { Link, RouteComponentProps } from 'react-router-dom';
+import { RouteComponentProps } from 'react-router-dom';
+import { bindActionCreators, Dispatch } from 'redux';
 import { connect } from 'react-redux';
 import { ApplicationState }  from '../store';
 import * as CounterStore from '../store/Counter';
-import * as WeatherForecasts from '../store/WeatherForecasts';
+import * as BlockerStore from '../store/Blocker';
 
 type CounterProps =
     CounterStore.CounterState
     & typeof CounterStore.actionCreators
+    & { openBlocker: typeof BlockerStore.actionCreators.open }
     & RouteComponentProps<{}>;
 
 class Counter extends React.Component<CounterProps, {}> {
@@ -20,12 +22,19 @@ class Counter extends React.Component<CounterProps, {}> {
             <p>Current count: <strong>{ this.props.count }</strong></p>
 
             <button onClick={ () => { this.props.increment() } }>Increment</button>
+
+            <button onClick={ () => { this.props.openBlocker("Blocked?") } }>Modal</button>
         </div>;
     }
 }
 
+const mapDispatchToProps = (dispatch: Dispatch) => bindActionCreators({
+    ...CounterStore.actionCreators,
+    openBlocker: BlockerStore.actionCreators.open,
+}, dispatch);
+
 // Wire up the React component to the Redux store
 export default connect(
     (state: ApplicationState) => state.counter, // Selects which state properties are merged into the component's props
-    CounterStore.actionCreators                 // Selects which action creators are merged into the component's props
+    mapDispatchToProps                          // Selects which action creators are merged into the component's props
 )(Counter);

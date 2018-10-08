@@ -64,3 +64,22 @@
         text-overflow: ellipsis;
     }
 }
+
+.blockerContainer {
+    width: 250px;
+    height: 200px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    position: absolute;
+    background: #fff;
+}
+.blockerInner {
+    margin: 0px auto;
+    display: block;
+    padding: 20% 0 0 0;
+}
+.blockerText {
+    font-weight: bold;
+    text-align: center;
+}

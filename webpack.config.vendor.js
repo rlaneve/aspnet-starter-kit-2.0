@@ -33,7 +33,8 @@ const config = (isDebug) => {
                 'redux',
                 'redux-thunk',
                 'react-router-redux',
-                'jquery'
+                'jquery',
+                'react-modal'
             ],
         },
         output: {
