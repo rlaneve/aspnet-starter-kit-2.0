@@ -1,21 +1,24 @@
 import * as React from "react";
 
+import { EquipmentItemType } from "../code/EquipmentTypes";
+
 import { EquipmentItemNormal, EquipmentItemNormalProps } from "./EquipmentItemNormal";
+import { EquipmentItemHeader, EquipmentItemHeaderProps } from "./EquipmentItemHeader";
 
 type EquipmentItemProps = 
-    EquipmentItemNormalProps;
+    EquipmentItemNormalProps
+    & EquipmentItemHeaderProps;
 
 class EquipmentItem extends React.PureComponent<EquipmentItemProps, {}> {
     render() {
-        return (<EquipmentItemNormal {...this.props} />);
-        // const type = this.props.item.type;
-        // // NOTE: no support for Floater type yet.
-        // switch(type) {
-        //     case 2:
-        //         return (<Header {...this.props} />);
-        //     default:
-        //         return (<Normal {...this.props} />);
-        // }
+        const type = this.props.item.type;
+        // NOTE: no support for Floater type yet.
+        switch(type) {
+            case EquipmentItemType.Header:
+                return (<EquipmentItemHeader {...this.props} />);
+            default:
+                return (<EquipmentItemNormal {...this.props} />);
+        }
     }
 }
 

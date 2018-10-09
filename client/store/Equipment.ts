@@ -4,7 +4,7 @@ import assign from 'lodash-es/assign';
 
 import * as util from '../code/Utility';
 
-import { IEquipmentItem } from '../code/EquipmentTypes';
+import { IEquipmentItem, EquipmentItemType } from '../code/EquipmentTypes';
 
 // -----------------
 // STATE - This defines the type of data maintained in the Redux store.
@@ -49,12 +49,13 @@ export const actionCreators = {
 
 const initialState: EquipmentState = {
     items: [
-        { id: "_1_", model: "ASKM1", description: "ASKM1 DESCRIPTION", quantity: 1, cost: 50, margin: 50, price: 100, extendedCost: 50, extendedPrice: 100 },
-        { id: "_2_", model: "ASKM1", description: "ASKM1 DESCRIPTION", quantity: 1, cost: 50, margin: 50, price: 100, extendedCost: 50, extendedPrice: 100 },
-        { id: "_3_", model: "ASKM1", description: "ASKM1 DESCRIPTION", quantity: 1, cost: 50, margin: 50, price: 100, extendedCost: 50, extendedPrice: 100 },
-        { id: "_4_", model: "ASKM1", description: "ASKM1 DESCRIPTION", quantity: 1, cost: 50, margin: 50, price: 100, extendedCost: 50, extendedPrice: 100 },
-        { id: "_5_", model: "ASKM1", description: "ASKM1 DESCRIPTION", quantity: 1, cost: 50, margin: 50, price: 100, extendedCost: 50, extendedPrice: 100 },
-        { id: "_6_", model: "ASKM1", description: "ASKM1 DESCRIPTION", quantity: 1, cost: 50, margin: 50, price: 100, extendedCost: 50, extendedPrice: 100 },
+        { id: "_0_", type: EquipmentItemType.Header, model: "HEADER", description: "Super Cool Header", quantity: 0, cost: 0, margin: 0, price: 0, extendedCost: 0, extendedPrice: 0 },
+        { id: "_1_", type: EquipmentItemType.Normal, model: "ASKM1", description: "ASKM1 DESCRIPTION", quantity: 1, cost: 50, margin: 50, price: 100, extendedCost: 50, extendedPrice: 100 },
+        { id: "_2_", type: EquipmentItemType.Normal, model: "ASKM1", description: "ASKM1 DESCRIPTION", quantity: 1, cost: 50, margin: 50, price: 100, extendedCost: 50, extendedPrice: 100 },
+        { id: "_3_", type: EquipmentItemType.Normal, model: "ASKM1", description: "ASKM1 DESCRIPTION", quantity: 1, cost: 50, margin: 50, price: 100, extendedCost: 50, extendedPrice: 100 },
+        { id: "_4_", type: EquipmentItemType.Normal, model: "ASKM1", description: "ASKM1 DESCRIPTION", quantity: 1, cost: 50, margin: 50, price: 100, extendedCost: 50, extendedPrice: 100 },
+        { id: "_5_", type: EquipmentItemType.Normal, model: "ASKM1", description: "ASKM1 DESCRIPTION", quantity: 1, cost: 50, margin: 50, price: 100, extendedCost: 50, extendedPrice: 100 },
+        { id: "_6_", type: EquipmentItemType.Normal, model: "ASKM1", description: "ASKM1 DESCRIPTION", quantity: 1, cost: 50, margin: 50, price: 100, extendedCost: 50, extendedPrice: 100 },
     ]
 };
 
@@ -69,6 +70,30 @@ function getItemCostChanges(oldItem, newCost) {
     return changes;
 }
 
+function getModelAndTypeChanges(oldItem, newModel) {
+    let newType = EquipmentItemType.Normal; // normal
+    if (newModel.toUpperCase() === "HEADER") {
+        newType = EquipmentItemType.Header; // header
+    }
+    if ((oldItem.type || EquipmentItemType.Normal) !== newType) {
+        let newQuantity = 0;
+        if (newType === 1) { // normal
+            newQuantity = 1;
+        }
+        return {
+            model: newModel,
+            type: newType,
+            quantity: newQuantity,
+            cost: 0,
+            price: 0,
+            margin: 0,
+            extendedCost: 0,
+            extendedPrice: 0
+        };
+    }
+    return { model: newModel };
+}
+
 function applyItemChanges(state:EquipmentState, itemId:string, changes:object):EquipmentState {
     return {
         ...state,
@@ -81,7 +106,7 @@ export const reducer: Reducer<EquipmentState> = (state: EquipmentState = initial
     let item = state.items.find(i => i.id === action.id) as IEquipmentItem;
     switch (action.type) {
         case 'EQUIPMENT_UPDATE_MODEL':
-            return applyItemChanges(state, action.id, { model: action.newValue });
+            return applyItemChanges(state, action.id, getModelAndTypeChanges(item, action.newValue));
         case 'EQUIPMENT_UPDATE_DESCRIPTION':
             return applyItemChanges(state, action.id, { description: action.newValue });
         case 'EQUIPMENT_UPDATE_QUANTITY':
