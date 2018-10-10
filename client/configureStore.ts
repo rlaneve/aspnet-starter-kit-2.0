@@ -5,11 +5,13 @@ import * as StoreModule from './store';
 import { ApplicationState, reducers } from './store';
 import { History } from 'history';
 import { createEpicMiddleware } from "redux-observable";
+import { createLogicMiddleware } from 'redux-logic';
 import { rootEpic } from "./store";
 
 
 export default function configureStore(history: History, initialState?: ApplicationState) {
     const epicMiddleware = createEpicMiddleware();
+    const logicMiddleware = createLogicMiddleware();
     // Build middleware. These are functions that can process the actions before they reach the store.
     const windowIfDefined = typeof window === 'undefined' ? null : window as any;
     // If devTools is installed, connect to it
@@ -17,6 +19,7 @@ export default function configureStore(history: History, initialState?: Applicat
     const createStoreWithMiddleware = compose<StoreEnhancerStoreCreator<any>>(
         applyMiddleware(thunk, routerMiddleware(history)),
         applyMiddleware(epicMiddleware),
+        applyMiddleware(logicMiddleware),
         devToolsExtension ? devToolsExtension() : <S>(next: StoreEnhancerStoreCreator<S>) => next
     )(createStore);
 
