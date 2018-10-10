@@ -1,16 +1,18 @@
 import { Action, Reducer } from 'redux';
 
 import assign from 'lodash-es/assign';
+import reduce from 'lodash-es/reduce';
 
 import * as util from '../code/Utility';
 
-import { IEquipmentItem, EquipmentItemType } from '../code/EquipmentTypes';
+import { IEquipmentItem, EquipmentItemType, IEquipmentTotals } from '../code/EquipmentTypes';
 
 // -----------------
 // STATE - This defines the type of data maintained in the Redux store.
 
 export interface EquipmentState {
-    items: IEquipmentItem[]
+    items: IEquipmentItem[],
+    totals: IEquipmentTotals
 }
 
 // -----------------
@@ -56,8 +58,27 @@ const initialState: EquipmentState = {
         { id: "_4_", type: EquipmentItemType.Normal, model: "ASKM1", description: "ASKM1 DESCRIPTION", quantity: 1, cost: 50, margin: 50, price: 100, extendedCost: 50, extendedPrice: 100 },
         { id: "_5_", type: EquipmentItemType.Normal, model: "ASKM1", description: "ASKM1 DESCRIPTION", quantity: 1, cost: 50, margin: 50, price: 100, extendedCost: 50, extendedPrice: 100 },
         { id: "_6_", type: EquipmentItemType.Normal, model: "ASKM1", description: "ASKM1 DESCRIPTION", quantity: 1, cost: 50, margin: 50, price: 100, extendedCost: 50, extendedPrice: 100 },
-    ]
+    ],
+    totals: {
+        extendedCost: 300,
+        extendedPrice: 600
+    }
 };
+
+function calculateTotals(items) {
+    return reduce(items, function(total, i) {
+        total.extendedCost += i.extendedCost || 0;
+        total.extendedPrice += i.extendedPrice || 0;
+        return total;
+    }, { extendedCost: 0, extendedPrice: 0 });
+}
+
+function updateTotals(state:EquipmentState) {
+    return {
+        ...state,
+        totals: calculateTotals(state.items)
+    };
+}
 
 function getItemCostChanges(oldItem, newCost) {
     const newPrice = util.priceFromCostAndMargin(newCost, oldItem.margin);
@@ -102,6 +123,7 @@ function applyItemChanges(state:EquipmentState, itemId:string, changes:object):E
 }
 export const reducer: Reducer<EquipmentState> = (state: EquipmentState = initialState, incomingAction: Action) => {
     let newPrice:number;
+    let newState:EquipmentState;
     const action = incomingAction as KnownAction;
     let item = state.items.find(i => i.id === action.id) as IEquipmentItem;
     switch (action.type) {
@@ -112,15 +134,17 @@ export const reducer: Reducer<EquipmentState> = (state: EquipmentState = initial
         case 'EQUIPMENT_UPDATE_QUANTITY':
             const newQuantity = parseInt(action.newValue, 10);
             if (isNaN(newQuantity)) return state;
-            return applyItemChanges(state, action.id, {
+            newState = applyItemChanges(state, action.id, {
                 quantity: newQuantity,
                 extendedCost: newQuantity * item.cost,
                 extendedPrice: newQuantity * item.price
             });
+            return updateTotals(newState);
         case 'EQUIPMENT_UPDATE_COST':
             const newCost = parseFloat(action.newValue);
             if (isNaN(newCost)) return state;
-            return applyItemChanges(state, action.id, getItemCostChanges(item, newCost));
+            newState = applyItemChanges(state, action.id, getItemCostChanges(item, newCost));
+            return updateTotals(newState);
         case 'EQUIPMENT_UPDATE_MARGIN':
             // this isn't working right when margin is 100+, or price is 0, or some combination
             const newMargin = parseFloat(action.newValue);
@@ -133,25 +157,28 @@ export const reducer: Reducer<EquipmentState> = (state: EquipmentState = initial
                 }
             }
             newPrice = util.priceFromCostAndMargin(item.cost, newMargin)
-            return applyItemChanges(state, action.id, {
+            newState = applyItemChanges(state, action.id, {
                 margin: newMargin,
                 price: newPrice,
                 extendedPrice: newPrice * item.quantity
             });
+            return updateTotals(newState);
         case 'EQUIPMENT_UPDATE_PRICE':
             newPrice = parseFloat(action.newValue);
             if (isNaN(newPrice)) return state;
-            return applyItemChanges(state, action.id, {
+            newState = applyItemChanges(state, action.id, {
                 price: newPrice,
                 margin: util.marginFromCostAndPrice(item.cost, newPrice),
                 extendedPrice: newPrice * item.quantity
             });
+            return updateTotals(newState);
         case 'EQUIPMENT_DELETE_ITEM':
-            return {
+            newState = {
                 ...state,
                 items: state.items.filter(item => item.id !== action.id)
             };
-            default:
+            return updateTotals(newState);
+        default:
     }
 
     // For unrecognized actions (or in cases where actions have no effect), must return the existing state

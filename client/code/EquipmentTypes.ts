@@ -14,3 +14,8 @@ export interface IEquipmentItem {
     extendedCost: number,
     extendedPrice: number
 }
+
+export interface IEquipmentTotals {
+    extendedCost: number,
+    extendedPrice: number
+}

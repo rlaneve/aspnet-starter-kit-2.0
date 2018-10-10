@@ -7,6 +7,7 @@ import { ApplicationState }  from '../store';
 import * as EquipmentStore from '../store/Equipment';
 
 import EquipmentItem from './EquipmentItem';
+import EquipmentFooter from './EquipmentFooter';
 
 type EquipmentProps =
     EquipmentStore.EquipmentState
@@ -105,6 +106,7 @@ class Equipment extends React.Component<EquipmentProps, EquipmentState> {
                     )}
                 </tbody>
                 <tfoot>
+                    <EquipmentFooter totals={this.props.totals} />
                 </tfoot>
             </table>
         </div>;
