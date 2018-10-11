@@ -187,8 +187,8 @@ tasks.set('start', () => {
       // Node.js middleware that compiles application in watch mode with HMR support
       // http://webpack.github.io/docs/webpack-dev-middleware.html
       const webpackDevMiddleware = require('webpack-dev-middleware')(compiler, {
-        publicPath: webpackConfig[0].output.publicPath,
-        stats: webpackConfig[0].stats
+        publicPath: webpackConfig.output.publicPath,// webpackConfig[0].output.publicPath,
+        stats: webpackConfig.stats// webpackConfig[0].stats
       });
       compiler.hooks.done.tap('done', () => {
         // Launch ASP.NET Core server after the initial bundling is complete

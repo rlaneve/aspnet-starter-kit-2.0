@@ -97,7 +97,7 @@ const config = (isDebug) => {
         devtool: isDevBuild ? 'inline-source-map' : 'source-map'
     });
 
-    return [clientBundleConfig, serverBundleConfig];
+    return clientBundleConfig;//[clientBundleConfig, serverBundleConfig];
 };
 
 module.exports = config(isDebug);
