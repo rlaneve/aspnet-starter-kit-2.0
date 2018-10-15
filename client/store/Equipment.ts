@@ -118,7 +118,7 @@ function getModelAndTypeChanges(oldItem, newModel) {
 function applyItemChanges(state:EquipmentState, itemId:string, changes:object):EquipmentState {
     return {
         ...state,
-        items: state.items.map(item => item.id !== itemId ? item : assign(item, changes) as IEquipmentItem)
+        items: state.items.map(item => item.id !== itemId ? item : assign({}, item, changes) as IEquipmentItem)
     };
 }
 export const reducer: Reducer<EquipmentState> = (state: EquipmentState = initialState, incomingAction: Action) => {
