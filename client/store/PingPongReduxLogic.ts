@@ -23,9 +23,9 @@ export const reducer: Reducer<PingLogicState> = (state: PingLogicState = unloade
     const action = incomingAction as KnownAction;
     switch (action.type) {
         case 'LOGIC_PING':
-            return { isLogicPinging: true };
+            return { ...state, isLogicPinging: true };
         case 'LOGIC_PONG':
-            return { isLogicPinging: false };
+            return { ...state, isLogicPinging: false };
         default: const exhaustiveCheck: never = action;
     }
     return state || unloadedState;
@@ -34,14 +34,12 @@ export const reducer: Reducer<PingLogicState> = (state: PingLogicState = unloade
 // redux-logic
 export const pingPongLogic = createLogic<PingLogicState>({
     type: 'LOGIC_PING',
-    process: ({ getState }, dispatch, done) => {
-        if (getState().isLogicPinging = true) {
-            let fetchTask = fetch(`api/Item/1`)
-                .then(response => response.json() as Promise<EquipmentItem>)
-            addTask(fetchTask);
-            console.log(fetchTask);
-            dispatch({ type: 'LOGIC_PONG' })
-        }
+    process: ( {}, dispatch, done) => {
+        let fetchTask = fetch(`api/Item/1`)
+            .then(response => response.json() as Promise<EquipmentItem>)
+            .then(response => console.log(response))
+        addTask(fetchTask);
+        dispatch ({ type: 'LOGIC_PONG'})
         done();
     }
 })
