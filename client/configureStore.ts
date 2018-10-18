@@ -7,11 +7,12 @@ import { History } from 'history';
 import { createEpicMiddleware } from "redux-observable";
 import { createLogicMiddleware } from 'redux-logic';
 import { rootEpic } from "./store";
+import logic from './store/Logic';
 
 
 export default function configureStore(history: History, initialState?: ApplicationState) {
     const epicMiddleware = createEpicMiddleware();
-    const logicMiddleware = createLogicMiddleware();
+    const logicMiddleware = createLogicMiddleware(logic);
     // Build middleware. These are functions that can process the actions before they reach the store.
     const windowIfDefined = typeof window === 'undefined' ? null : window as any;
     // If devTools is installed, connect to it

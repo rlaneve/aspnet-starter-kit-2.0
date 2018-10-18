@@ -16,7 +16,7 @@ class Ping extends React.Component<PingLogicProps, {}> {
 
             <p>This is a simple example of a React component.</p>
 
-            <p>Is pinging: <strong>{ this.props.isPinging.toString() }</strong></p>
+            <p>Is pinging: <strong>{ this.props.isLogicPinging.toString() }</strong></p>
 
             <button onClick={ () => { this.props.logicPing() } }>Start Logic Ping</button>
 
@@ -26,6 +26,6 @@ class Ping extends React.Component<PingLogicProps, {}> {
 
 // Wire up the React component to the Redux store
 export default connect(
-    (state: ApplicationState) => state.ping, // Selects which state properties are merged into the component's props
+    (state: ApplicationState) => state.pingLogic, // Selects which state properties are merged into the component's props
     PingReduxLogicStore.logicActionCreators,                 // Selects which action creators are merged into the component's props
 )(Ping);
