@@ -37,6 +37,16 @@ export class NavMenu extends React.Component<{}, {}> {
                                 <span className='glyphicon glyphicon-th-list'></span> Fetch data
                             </NavLink>
                         </li>
+                        <li>
+                            <NavLink to={ '/ping' } activeClassName='active'>
+                                <span className='glyphicon glyphicon-th-list'></span> Ping Epic
+                            </NavLink>
+                        </li>
+                        <li>
+                            <NavLink to={ '/pinglogic' } activeClassName='active'>
+                                <span className='glyphicon glyphicon-th-list'></span> Ping redux-logic
+                            </NavLink>
+                        </li>
                     </ul>
                 </div>
             </div>
